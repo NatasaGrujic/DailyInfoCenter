@@ -10,140 +10,156 @@
     var curWeatherSymbImg = $"images/SMHIs_vadersymboler/{curWeatherSymb.ToString()}.png";
 }
 
-<div class="text-center">
-    <h1 class="display-4" id="timeDisplay">Välkommen</h1>
-    <p>Vecka @Model.DailyQuote.weekNo</p>
-    <p>Välkommen till denna @Model.DailyQuote.message  @Model.DailyQuote.dayName</p>
-    <h2>Väder</h2>
-    <p><span><img src="@curWeatherSymbImg" aria-hidden="true" /></span>Nu: @Html.DisplayFor(modelitem => curWeatherSymb) och @curTemp grader. </p>
-    <h2>Trafikmeddelanden</h2>
-    <p>
-        <ul class="list-unstyled">
-        
-            @foreach (var msg in Model.TrafficInfo.messages.Take(4))
-            {
-                <li class="mb-3"><span> @msg.title:</span><br /><span>@msg.description</span></li>
-            }
-        </ul>
-    </p>
+<div class="text-center glass">
 
-
-    <h2>Kollektivtrafik</h2>
-    @if (Model.SiteId == null)
-    {
-
-        <div>
-            <form>
-                <input name="stopSearch" placeholder="Sök hållplats" />
-                <input type="submit" value="Sök" />
-            </form>
+    <div class="row m-1 align-items-center">
+        <div class="col p-3">
+           <p>Välkommen till denna @Model.DailyQuote.message  @Model.DailyQuote.dayName v. @Model.DailyQuote.weekNo</p>
         </div>
-    }
-    @if (Model.Stops != null)
-    {
-        if (Model.Stops.ResponseData != null)
+    </div>
+    <div class="row m-1" style="justify-content:space-between">
+        <div class="col-6 p-3">
+            <h2>Tid</h2>
+            <h2 class="display-4" id="timeDisplay"></h2>
+        </div>
+        <div class="col-6 p-3">
+            <h2 class="col-6">Vädret</h2>
+            <p><span><img src="@curWeatherSymbImg" aria-hidden="true" /></span> @Html.DisplayFor(modelitem => curWeatherSymb) och @curTemp grader. </p>
+        </div>
+    </div>
+    <div class="text-center">
+
+        <h2>Trafikmeddelanden</h2>
+        <p>
+            <ul class="list-unstyled">
+
+                @foreach (var msg in Model.TrafficInfo.messages.Take(4))
+                {
+                    <li class="mb-3"><span> @msg.title:</span><br /><span>@msg.description</span></li>
+                }
+            </ul>
+        </p>
+
+
+        <h2>Kollektivtrafik</h2>
+        @if (Model.SiteId == null)
         {
             <div>
-                <p>Välj en hållplats att visa avgångar från:</p>
-                <table class="table">
-                    <thead>
-                    <th>Namn</th>
-                    <th>Typ</th>
-                    </thead>
-
-                    @foreach (var stop in Model.Stops.ResponseData)
-                    {
-                        <tr>
-                            <td><a asp-route-SiteId="@stop.SiteId">@stop.Name</a></td>
-                            <td>@stop.Type</td>
-                        </tr>
-                    }
-                </table>
+                <form>
+                    <input name="stopSearch" placeholder="Sök hållplats" />
+                    <input type="submit" value="Sök" />
+                </form>
             </div>
         }
-        else
+        @if (Model.Stops != null)
         {
-            <p class="text-danger">Inga data från SLs API. Vänligen försök igen senare. Om problemet kvarstår, vänligen kontrollera att din Api-nyckel är korrekt.</p>
-        }
-    }
-    @if (Model.SiteId != null)
-    {
-        if (Model.Departures.ResponseData.Buses.Length > 0)
-        {
-            <h3>Avgångar med buss</h3>
-            <table class="table">
-                <thead>
-                <th>Tid</th>
-                <th>Linje</th>
-                <th>Destination</th>
-                </thead>
-                <tbody>
+            if (Model.Stops.ResponseData != null)
+            {
+                <div>
+                    <p>Välj en hållplats att visa avgångar från:</p>
+                    <table class="table">
+                        <thead>
+                        <th>Namn</th>
+                        <th>Typ</th>
+                        </thead>
 
-                    @foreach (var departure in Model.Departures.ResponseData.Buses)
-                    {
-                        <tr>
-                            <td>@departure.DisplayTime</td>
-                            <td>@departure.LineNumber</td>
-                            <td>@departure.Destination</td>
-                        </tr>
-                    }
-                </tbody>
-            </table>
+                        @foreach (var stop in Model.Stops.ResponseData)
+                        {
+                            <tr>
+                                <td><a asp-route-SiteId="@stop.SiteId">@stop.Name</a></td>
+                                <td>@stop.Type</td>
+                            </tr>
+                        }
+                    </table>
+                </div>
+            }
+            else
+            {
+                <p class="text-danger">Inga data från SLs API. Vänligen försök igen senare. Om problemet kvarstår, vänligen kontrollera att din Api-nyckel är korrekt.</p>
+            }
         }
-
-        if (Model.Departures.ResponseData.Trains.Length > 0)
+        @if (Model.SiteId != null)
         {
-            <h3>Avgångar med pendeltåg</h3>
-            <table class="table">
-                <thead>
-                <th>Tid</th>
-                <th>Linje</th>
-                <th>Destination</th>
-                </thead>
-                <tbody>
+            if (Model.Departures.ResponseData.Buses.Length > 0)
+            {
+                <h3>Avgångar med buss</h3>
+                <table class="table">
+                    <thead>
+                    <th>Tid</th>
+                    <th>Linje</th>
+                    <th>Destination</th>
+                    </thead>
+                    <tbody>
 
-                    @foreach (var departure in Model.Departures.ResponseData.Buses)
-                    {
-                        <tr>
-                            <td>@departure.DisplayTime</td>
-                            <td>@departure.LineNumber</td>
-                            <td>@departure.Destination</td>
-                        </tr>
-                    }
-                </tbody>
-            </table>
-        }
-        if (Model.Departures.ResponseData.Metros.Length > 0)
-        {
-            <h3>Avgångar med tunnelbana</h3>
-            <table class="table">
-                <thead>
-                <th>Tid</th>
-                <th>Linje</th>
-                <th>Destination</th>
-                </thead>
-                <tbody>
+                        @foreach (var departure in Model.Departures.ResponseData.Buses)
+                        {
+                            <tr>
+                                <td>@departure.DisplayTime</td>
+                                <td>@departure.LineNumber</td>
+                                <td>@departure.Destination</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            }
 
-                    @foreach (var departure in Model.Departures.ResponseData.Buses)
-                    {
-                        <tr>
-                            <td>@departure.DisplayTime</td>
-                            <td>@departure.LineNumber</td>
-                            <td>@departure.Destination</td>
-                        </tr>
-                    }
-                </tbody>
-            </table>
+            if (Model.Departures.ResponseData.Trains.Length > 0)
+            {
+                <h3>Avgångar med pendeltåg</h3>
+                <table class="table">
+                    <thead>
+                    <th>Tid</th>
+                    <th>Linje</th>
+                    <th>Destination</th>
+                    </thead>
+                    <tbody>
+
+                        @foreach (var departure in Model.Departures.ResponseData.Buses)
+                        {
+                            <tr>
+                                <td>@departure.DisplayTime</td>
+                                <td>@departure.LineNumber</td>
+                                <td>@departure.Destination</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            }
+            if (Model.Departures.ResponseData.Metros.Length > 0)
+            {
+                <h3>Avgångar med tunnelbana</h3>
+                <table class="table">
+                    <thead>
+                    <th>Tid</th>
+                    <th>Linje</th>
+                    <th>Destination</th>
+                    </thead>
+                    <tbody>
+
+                        @foreach (var departure in Model.Departures.ResponseData.Buses)
+                        {
+                            <tr>
+                                <td>@departure.DisplayTime</td>
+                                <td>@departure.LineNumber</td>
+                                <td>@departure.Destination</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            }
+            if (Model.Departures.StatusCode > 0)
+            {
+                <p class="text-danger">Något gick fel med att hämta SLs data (felkod: @Model.Departures.StatusCode, @Model.Departures.Message)</p>
+            }
         }
-        if (Model.Departures.StatusCode > 0)
-        {
-            <p class="text-danger">Något gick fel med att hämta SLs data (felkod: @Model.Departures.StatusCode, @Model.Departures.Message)</p>
-        }
-    }
+    </div>
 </div>
-@section Scripts { 
-    <script src="/js/startPage.js"></script> 
+
+
+
+@section Scripts {
+    <script src="/js/startPage.js"></script>
     <script>
-    infoStart(); 
+        infoStart();
     </script>
 }
